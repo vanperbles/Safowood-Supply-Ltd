@@ -20,3 +20,17 @@
     <!-- Custom js for this page -->
     <script src="admin/assets/js/dashboard.js"></script>
     <!-- End custom js for this page -->
+
+    <script>
+    $(document).ready(function () {
+        // Automatically close the alert after 3 seconds
+        setTimeout(function () {
+            $(".alert").alert('close');
+        }, 3000);
+
+        // Close the alert when the close button is clicked
+        $(".alert .close").on('click', function () {
+            $(this).parent().alert('close');
+        });
+    });
+</script>
