@@ -5,13 +5,13 @@
   </head>
   <body>
     <div class="container-scroller">
-
       <!-- partial:partials/_sidebar.html -->
       @include('admin.sidebar')
       <!-- partial -->
       
         <!-- partial:partials/_navbar.html -->
         @include('admin.head')
+        <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
           @if(session()->has('message'))
@@ -24,15 +24,15 @@
             @endif
 
             <div class="page-header">
-                <h3 class="page-title">Category</h3>
-                <button style="float: right;" type="submit" class="btn btn-primary ms-auto" ><a href="{{url('add-category')}}">Add Category</a></button>
+                <h3 class="page-title">Product</h3>
+                <button style="float: right;" type="submit" class="btn btn-primary ms-auto" ><a href="{{route('add_product')}}">Add Product</a></button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="">Inventry</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                             Category
+                             Product
                         </li>
                     </ol>
                 </nav>
@@ -41,7 +41,7 @@
               <div class="col-12 grid-margin">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Category List</h4>
+                    <h4 class="card-title">Product List</h4>
                     <div class="table-responsive">
                       <table class="table">
                         <thead>
@@ -53,14 +53,18 @@
                                 </label>
                               </div>
                             </th>
-                            <th> Category Name </th>
+                            <th> Product Image </th>
+                            <th> Product Name </th>
+                            <th> Product Price </th>
+                            <th> Product Quantity </th>
+                            <th> Product Category </th>
                             
                             <th> Edit </th>
                             <th> Delete </th>
                           </tr>
                         </thead>
                         <tbody>
-                            @foreach($data as $c)
+                            @foreach($products as $p)
                           <tr>
                             <td>
                               <div class="form-check form-check-muted m-0">
@@ -69,14 +73,16 @@
                                 </label>
                               </div>
                             </td>
-                            
-                            <td> {{$c->name}} </td>
-                            
+                            <td> <img src="{{ asset('uploads/'.$p->image) }}" alt="product image"> </td>
+                            <td> {{$p->name}} </td>
+                            <td> $ {{$p->price}} </td>
+                            <td> {{$p->quantity}} </td>
+                            <td> {{$p->category->name}} </td>
                             <td>
-                              <div class="badge badge-outline-warning">Edit <span class="mdi mdi-cash-edit"></span> </div>
+                              <a href="{{url('update_product', $p->id)}}"><div class="badge badge-outline-warning">Edit <span class="mdi mdi-cash-edit"></span> </div></a>
                             </td>
                             <td>
-                              <a onclick="return confirm(' Are you sure you want to Delete this Item')" href="{{url('delete_category', $c->id)}}"><div class="badge badge-outline-danger">Delete <span class="mdi mdi-trash-can-outline"></span></i></div></a>
+                              <a onclick="return confirm(' Are you sure you want to Delete this Item')" href="{{url('delete_product', $p->id)}}"><div class="badge badge-outline-danger">Delete <span class="mdi mdi-trash-can-outline"></span></i></div></a>
                             </td>
                           </tr>
                           
@@ -89,9 +95,6 @@
                 </div>
               </div>
             </div>
-
-
-
 
           </div>
         </div>

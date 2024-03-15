@@ -59,7 +59,7 @@
             <span class="nav-link">Navigation</span>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{url('redirect')}}">
               <span class="menu-icon">
                 <i class="mdi mdi-speedometer"></i>
               </span>
@@ -77,44 +77,48 @@
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="{{url('show_category_item')}}">Category</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Add Product</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Add Quantity</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Stock Remaining</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('products')}}">Product</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Add Quantity</a></li>
+                <li class="nav-item"> <a class="nav-link" href="#">Stock Remaining</a></li>
               </ul>
             </div>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <a class="nav-link" data-bs-toggle="collapse" href="#customer" aria-expanded="false" aria-controls="customer">
               <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
+                <i class="mdi mdi-account"></i>
               </span>
               <span class="menu-title">Customers</span>
-              <i class="menu-arrow"></i>
+              <i class="menu-arrow"></i>              
             </a>
-            <div class="collapse" id="ui-basic">
+            <div class="collapse" id="customer">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Customer List</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Add Customer</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Stock Remaining</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('customers')}}">Customer List</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('customers.create')}}">Add Customer</a></li>
+                
               </ul>
             </div>
           </li>
+          
           <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/forms/basic_elements.html">
+            <a class="nav-link" data-bs-toggle="collapse" href="#myauth" aria-expanded="false" aria-controls="myauth">
               <span class="menu-icon">
-                <i class="mdi mdi-playlist-play"></i>
+                <i class="mdi mdi-security"></i>
               </span>
-              <span class="menu-title">Customers </span>
+              <span class="menu-title">POS</span>
+              <i class="menu-arrow"></i>
             </a>
+            <div class="collapse" id="myauth">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{route ('create_orders')}}"> Creat Orders</a></li>
+                <li class="nav-item"> <a class="nav-link" href="orders.php"> Ordes </a></li>
+                <li class="nav-item"> <a class="nav-link" href="#"> 500 </a></li>
+                <li class="nav-item"> <a class="nav-link" href="#"> Login </a></li>
+                <li class="nav-item"> <a class="nav-link" href="#"> Register </a></li>
+              </ul>
+            </div>
           </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="pages/tables/basic-table.html">
-              <span class="menu-icon">
-                <i class="mdi mdi-table-large"></i>
-              </span>
-              <span class="menu-title">Tables</span>
-            </a>
-          </li>
+
           <li class="nav-item menu-items">
             <a class="nav-link" href="pages/charts/chartjs.html">
               <span class="menu-icon">

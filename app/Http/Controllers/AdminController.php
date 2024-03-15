@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
@@ -39,4 +40,57 @@ class AdminController extends Controller
         return redirect()->back()->with('message','Item was deleted ');
 
     }
+
+    public function create_orders(){
+        $products = Product::all();
+        return view('admin.order_create', compact('products'));
+
+    }
+
+    public function addItem(Request $request){
+
+        $request->validate([
+            'product_id' => 'required',
+            'quantity' => 'required|numeric|min:1',
+        ]);
+
+        $productId = $request->input('product_id');
+        $quantity = $request->input('quantity');
+
+        $product = Product::find($productId);
+        
+        if(!$product){
+            return redirect()->back()->with('error','Product Not found');
+        }
+
+        if($product->quantity < $quantity){
+            return redirect()->back()->with('error','Only ' . $product->quantity .' quantities are available ');
+        }
+
+        $productData = [
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'image' => $product->image,
+            'price' => $product->price,
+            'quantity' => $quantity,
+        ];
+
+        if (!in_array($product->id, Session::get('productItemsId', []))) {
+            Session::push('productItemsId', $product->id);
+            Session::push('productItems', $productData);
+        } else {
+            $productItems = Session::get('productItems', []);
+            foreach ($productItems as $key => $prodSessionItem) {
+                if ($prodSessionItem['product_id'] == $product->id) {
+                    $newQuantity = $prodSessionItem['quantity'] + $quantity;
+                    $productData['quantity'] = $newQuantity;
+                    Session::put("productItems.$key", $productData);
+                }
+            }
+        }
+        return redirect()->back()->with('message','Item was Added '. $product->name);
+
+    }
+
+
 }

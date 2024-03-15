@@ -5,13 +5,13 @@
   </head>
   <body>
     <div class="container-scroller">
-
       <!-- partial:partials/_sidebar.html -->
       @include('admin.sidebar')
       <!-- partial -->
       
         <!-- partial:partials/_navbar.html -->
         @include('admin.head')
+        <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
           @if(session()->has('message'))
@@ -24,15 +24,15 @@
             @endif
 
             <div class="page-header">
-                <h3 class="page-title">Category</h3>
-                <button style="float: right;" type="submit" class="btn btn-primary ms-auto" ><a href="{{url('add-category')}}">Add Category</a></button>
+                <h3 class="page-title">Customer</h3>
+                <button style="float: right;" type="submit" class="btn btn-primary ms-auto" ><a href="{{route('customers.create')}}">Add Customer</a></button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="">Inventry</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                             Category
+                             Customer
                         </li>
                     </ol>
                 </nav>
@@ -41,7 +41,7 @@
               <div class="col-12 grid-margin">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Category List</h4>
+                    <h4 class="card-title">Customer List</h4>
                     <div class="table-responsive">
                       <table class="table">
                         <thead>
@@ -53,14 +53,18 @@
                                 </label>
                               </div>
                             </th>
-                            <th> Category Name </th>
+                            <th> Profile Picture </th>
+                            <th> Customer Name </th>
+                            <th> Customer Price </th>
+                            <th> Customer Quantity </th>
+                            <th> Customer Category </th>
                             
                             <th> Edit </th>
                             <th> Delete </th>
                           </tr>
                         </thead>
                         <tbody>
-                            @foreach($data as $c)
+                            @foreach($customers as $c)
                           <tr>
                             <td>
                               <div class="form-check form-check-muted m-0">
@@ -69,14 +73,22 @@
                                 </label>
                               </div>
                             </td>
-                            
+                            <td>  </td>
                             <td> {{$c->name}} </td>
-                            
+                            <td> {{$c->email}} </td>
+                            <td> {{$c->phone}} </td>
+                            <td> {{$c->address}} </td>
                             <td>
-                              <div class="badge badge-outline-warning">Edit <span class="mdi mdi-cash-edit"></span> </div>
+                              <a href="{{route('customers.edit', $c->id)}}"><div class="badge badge-outline-warning">Edit <span class="mdi mdi-cash-edit"></span> </div></a>
                             </td>
                             <td>
-                              <a onclick="return confirm(' Are you sure you want to Delete this Item')" href="{{url('delete_category', $c->id)}}"><div class="badge badge-outline-danger">Delete <span class="mdi mdi-trash-can-outline"></span></i></div></a>
+                            <form action="{{ route('customers.destroy', $c) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Do you want to delete this User?')" class="badge badge-outline-danger">
+                                    Delete <span class="mdi mdi-trash-can-outline"></span>
+                                </button>
+                            </form> 
                             </td>
                           </tr>
                           
@@ -89,9 +101,6 @@
                 </div>
               </div>
             </div>
-
-
-
 
           </div>
         </div>
