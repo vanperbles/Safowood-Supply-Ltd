@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -41,11 +43,31 @@ class AdminController extends Controller
 
     }
 
+    //Checking for Cart Items
     public function create_orders(){
-        $products = Product::all();
-        return view('admin.order_create', compact('products'));
+        if (Auth::id()){
+            $id =Auth::user()->id;
+            $cart = cart::where('user_id', '=', $id)->get();
+           
+            $products = Product::all();
+            return view('admin.order_create', compact('products', 'cart'));
+        }
+        
 
     }
+
+
+    //Deleting Cart items
+    public function remove_cart($id){
+        $cart = Cart::find($id);
+        if(!$cart){
+            return redirect()->back()->with("error", "Item not found in the cart");
+        }
+        $cart->delete();
+        return redirect()->back()->with("message", "Item was deleted successfully");
+    }
+    
+
 
     public function addItem(Request $request){
 

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CartController;
 
 
 
@@ -60,3 +61,8 @@ Route::resource('customers',CustomerController::class);
 // Admin Orders 
 Route::get('/create-order', [AdminController::class, 'create_orders'])->name('create_orders');
 Route::post('/orders-code', [AdminController::class, 'addItem'])->name('addItem');
+
+// Cart Class View
+Route::post('/add-to-cart/{id}',[CartController::class, 'add_to_cart'])->name('add_to_cart');
+Route::get('/show_cart',[CartController::class, 'show_cart'])->name('show_cart');
+Route::get('/remove_cart/{id}',[AdminController::class, 'remove_cart'])->name('remove_cart');
