@@ -6,6 +6,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrdersController;
+
 
 
 
@@ -66,3 +68,9 @@ Route::post('/orders-code', [AdminController::class, 'addItem'])->name('addItem'
 Route::post('/add-to-cart/{id}',[CartController::class, 'add_to_cart'])->name('add_to_cart');
 Route::get('/show_cart',[CartController::class, 'show_cart'])->name('show_cart');
 Route::get('/remove_cart/{id}',[AdminController::class, 'remove_cart'])->name('remove_cart');
+Route::post('/update_cart', [CartController::class, 'updateCart'])->name('update_cart');
+
+// Orders ClassView
+Route::get('/cash_order',[OrdersController::class, 'cash_order'])->name('cash_order');
+Route::get('/momo_order',[OrdersController::class, 'momo_order'])->name('momo_order');
+

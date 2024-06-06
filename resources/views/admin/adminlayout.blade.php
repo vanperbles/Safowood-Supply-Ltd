@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     @include('admin.css')
+    
   </head>
   <body>
     <div class="container-scroller">

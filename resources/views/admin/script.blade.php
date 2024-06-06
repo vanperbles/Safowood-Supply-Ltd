@@ -16,10 +16,13 @@
     <script src="{{asset('admin/assets/js/misc.js')}}"></script>
     <script src="{{asset('admin/assets/js/settings.js')}}"></script>
     <script src="{{asset('admin/assets/js/todolist.js')}}"></script>
+    <script src="{{asset('admin/assets/js/jquary.min.js')}}"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
     <script src="{{asset('admin/assets/js/dashboard.js')}}"></script>
     <!-- End custom js for this page -->
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
@@ -86,5 +89,75 @@ $(document).ready(function() {
         return s.join(dec);
     }
 });
+
+// Updating cart item when user update quantity at the cart page
+$(document).ready(function() {
+        $('.increase-quantity, .decrease-quantity').click(function() {
+            let button = $(this);
+            let row = button.closest('tr');
+            let productId = button.data('id');
+            let qtyInput = row.find('.qty');
+            let unitPrice = parseFloat(row.find('.unit-price').text());
+            let quantity = parseInt(qtyInput.val());
+            let newQuantity;
+
+            if (button.hasClass('increase-quantity')) {
+                newQuantity = quantity + 1;
+            } else if (button.hasClass('decrease-quantity') && quantity > 1) {
+                newQuantity = quantity - 1;
+            } else {
+                return; // Prevent decreasing below 1
+            }
+
+            // Update the input field value
+            qtyInput.val(newQuantity);
+
+            // Update the total price for this row
+            let totalPrice = (unitPrice * newQuantity).toFixed(2);
+            row.find('.total-price').text(totalPrice);
+
+            // Send the updated quantity to the server via AJAX
+            $.ajax({
+                url: '{{ route("update_cart") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    productId: productId,
+                    quantity: newQuantity
+                },
+                success: function(response) {
+                    console.log('Success:', response);
+                    $('#total-price').text('Total Price: $' + response.totalPrice);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        });
+    });
+
+// calculating for total price 
+$(document).ready(function() {
+        // Function to update total price
+        function updateTotalPrice() {
+            var totalPrice = 0;
+            $('.qty').each(function() {
+                var quantity = parseInt($(this).val());
+                var price = parseFloat($(this).closest('tr').find('.unit-price').text());
+                var totalItemPrice = quantity * price;
+                $(this).closest('tr').find('.total-price').text(totalItemPrice.toFixed(2));
+                totalPrice += totalItemPrice;
+            });
+            $('#total-price').text('Total Price: $' + totalPrice.toFixed(2));
+        }
+
+        // Initial call to update total price
+        updateTotalPrice();
+
+        // Event listener for quantity changes
+        $('.qty').on('change', function() {
+            updateTotalPrice();
+        });
+    });
 
 </script>

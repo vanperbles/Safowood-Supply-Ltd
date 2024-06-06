@@ -58,11 +58,13 @@
                 </div>     
 
             </form>
-
+            
+                    
             <div class="card mt-3">
                 <div class="card-header">
                     <h4 class="mb-0">Products</h4>
-                    <h4 class="mb-0 total" style="float: right;">Total Price: GH </h4>
+                    <h4 class="mb-0 total" id="total-price" style="float: right;">GH </h4>
+                    
                 </div>
                 <div class="card-body">
 
@@ -88,16 +90,17 @@
                         </thead>
                         <tbody>
                         @foreach($cart as  $index =>$c)
-                            <tr>
+                            <tr data-product-id="{{ $c['id'] }}">
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $c['product_title'] }}</td>
                                 <td class="unit-price">{{ $c['price'] }}</td>
                                 <td>
                                     <div class="input-group" style="max-width: 150px;">
-                                        <button class="input-group-text decrease-quantity" style="background-color: #343a40; color: white;">-</button>
-                                        <input type="text" class="qty form-control" value="{{ $c['quantity'] }}" style="background-color: #343a40; color: white;">
-                                        <button class="input-group-text increase-quantity" style="background-color: #343a40; color: white;">+</button>
+                                        <button class="input-group-text decrease-quantity" style="background-color: #343a40; color: white;" data-id="{{ $c['id'] }}">-</button>
+                                        <input type="text" class="qty form-control" value="{{ $c['quantity'] }}" style="background-color: #343a40; color: white;" readonly>
+                                        <button class="input-group-text increase-quantity" style="background-color: #343a40; color: white;" data-id="{{ $c['id'] }}">+</button>
                                     </div>
+
                                 </td>
                                 <td class="total-price">{{ number_format($c['price'] * $c['quantity'], 2) }}</td>
 
@@ -105,14 +108,21 @@
                                 <td>
                                     <a href="{{route('remove_cart',$c->id)}}"><div class="badge badge-danger">Remove  </div></a>
                                 </td>
+                                
                             </tr>
                         @endforeach
+
+                        
                         </tbody>
+                        
                     </table>
                 </div>
-            
+                <div style="align-items: center; margin-top: 20px">
+                    <h1 style="font-size: 18px; padding-bottom: 12px; align-items: center;">Proceed to Order</h1>
+                    <a href="{{route('cash_order')}}" class="btn btn-success">Pay With Cash</a>
+                    <a href="{{route('momo_order')}}"class="btn btn-success " >Pay With MOMO</a>
+                </div>
 
-           
         </div>
     </div>
 </div>
@@ -139,35 +149,6 @@
         // Submit the form
         this.submit();
     });
-
-    document.querySelectorAll('.increase-quantity').forEach(button => {
-        button.addEventListener('click', function() {
-            const qtyInput = this.parentElement.querySelector('.qty');
-            const currentQty = parseInt(qtyInput.value);
-            const newQty = currentQty + 1;
-            qtyInput.value = newQty;
-            updateTotalPrice(this.closest('tr'), newQty);
-        });
-    });
-
-    document.querySelectorAll('.decrease-quantity').forEach(button => {
-        button.addEventListener('click', function() {
-            const qtyInput = this.parentElement.querySelector('.qty');
-            const currentQty = parseInt(qtyInput.value);
-            if (currentQty > 1) {
-                const newQty = currentQty - 1;
-                qtyInput.value = newQty;
-                updateTotalPrice(this.closest('tr'), newQty);
-            }
-        });
-    });
-
-    function updateTotalPrice(row, quantity) {
-        const price = parseFloat(row.querySelector('.unit-price').textContent);
-        const newTotalPrice = price * quantity;
-        row.querySelector('.total-price').textContent = newTotalPrice.toFixed(2);
-    }
-    
 </script>
 
 @stop

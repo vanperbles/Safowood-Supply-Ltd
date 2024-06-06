@@ -63,14 +63,71 @@ class CartController extends Controller
     {
         //
     }
-
     public function show_cart(){
         if (Auth::id()){
-            $id =Auth::user()->id;
-            $cart = cart::where('user_id', '=', $id)->get();
-            return view('order_create',compact('cart'));
+            $id = Auth::user()->id;
+            $cart = Cart::where('user_id', '=', $id)->get();
+    
+            // Calculate total price
+            $totalPrice = $cart->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
+    
+            return view('order_create',[
+                'cart' => $cart,
+                'totalPrice' => $totalPrice,
+            ]);
         }
     }
+    
+
+    public function updateCart(Request $request)
+    {
+        $productId = $request->input('productId');
+        $quantity = $request->input('quantity');
+
+        // Update the cart in the database
+        $cartItem = Cart::where('product_id', $productId)->first();
+        if ($cartItem) {
+            $cartItem->quantity = $quantity;
+            $cartItem->save();
+        }
+        
+        // Fetch the updated cart data
+        $updatedCart = Cart::all();
+
+        // Calculate total quantities and total price
+        $totalQuantities = $updatedCart->sum('quantity');
+        $totalPrice = $updatedCart->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+
+        
+
+        return response()->json([
+            'success' => true,
+            'cart' => $updatedCart,
+            'totalQuantities' => $totalQuantities,
+            'totalPrice' => number_format($totalPrice, 2)
+        ]);
+    }
+
+    public function showCart()
+{
+    // Fetch cart data
+    $cart = Cart::all();
+
+    // Calculate total price
+    $totalPrice = $cart->sum(function ($item) {
+        return $item->price * $item->quantity;
+    });
+
+    return view('your_view_name', [
+        'cart' => $cart,
+        'totalPrice' => $totalPrice, // Pass $totalPrice to the view
+    ]);
+}
+
 
     public function add_to_cart(Request $request, $id){
         if (Auth::id()){
