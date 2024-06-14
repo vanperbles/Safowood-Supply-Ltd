@@ -100,6 +100,7 @@
               </ul>
             </div>
           </li>
+
           
           <li class="nav-item menu-items">
             <a class="nav-link" data-bs-toggle="collapse" href="#myauth" aria-expanded="false" aria-controls="myauth">
@@ -118,6 +119,16 @@
                 <li class="nav-item"> <a class="nav-link" href="#"> Register </a></li>
               </ul>
             </div>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="{{url('orders')}}">
+              <span class="menu-icon">
+                <i class="mdi mdi-playlist-play"></i>
+              </span>
+              <span class="menu-title">Orders</span>
+              <i class="menu-arrow"></i>
+            </a>
+            
           </li>
         </ul>
       </nav>

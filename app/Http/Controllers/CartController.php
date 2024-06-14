@@ -157,8 +157,9 @@ class CartController extends Controller
                 $cart->address = $user->address;
                 $cart->product_title = $product->name;
                 $cart->price = ($product->discount_price != null) ? 
-                                $product->discount_price * $request->quantity : 
-                                $product->price * $request->quantity;
+                                $product->discount_price : 
+                                $product->price;
+
                 $cart->image = $product->image;
                 $cart->product_id = $product->id;
                 $cart->quantity = $request->quantity;

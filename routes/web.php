@@ -39,7 +39,7 @@ Route::middleware([
 
 // User Interface
 
-Route::get('/redirect',[HomeController::class, 'redirect'])->name('redirect');
+Route::get('/redirect',[HomeController::class, 'redirect'])->middleware('auth','verified')->name('redirect');
 
 
 // AdminConroller Interface 
@@ -73,4 +73,13 @@ Route::post('/update_cart', [CartController::class, 'updateCart'])->name('update
 // Orders ClassView
 Route::get('/cash_order',[OrdersController::class, 'cash_order'])->name('cash_order');
 Route::get('/momo_order',[OrdersController::class, 'momo_order'])->name('momo_order');
+Route::get('/orders',[OrdersController::class, 'orders'])->name('orders');
+Route::get('/deliver/{id}',[OrdersController::class, 'deliver'])->name('deliver');
+Route::get('/invoice/{id}',[OrdersController::class, 'invoice'])->name('invoice');
+Route::get('/send_mail/{id}',[OrdersController::class, 'send_mail'])->name('send_mail');
+Route::post('/send_user_mail/{id}',[OrdersController::class, 'send_user_mail'])->name('send_user_mail');
+
+// Search In Admin View
+Route::post('/search_order',[OrdersController::class, 'search_order'])->name('search_order');
+
 

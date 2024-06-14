@@ -39,11 +39,12 @@
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 col-form-label">Phone</label>
-                    <input type="number" name="phone" value="{{$customer->phone}}" class="form-control" fdprocessedid="brllum">
-                    @error('phone')
+                    <input type="email" name="email" value="{{$customer->phone}}" class="form-control" fdprocessedid="brllum" >
+                    @error('email')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
-                                </div>
+                </div>
+                
                 <div class="form-group">
                     <label class="col-sm-3 col-form-label">Address</label>
                     <input type="text" name="address" value="{{$customer->address}}" class="form-control" fdprocessedid="brllum">

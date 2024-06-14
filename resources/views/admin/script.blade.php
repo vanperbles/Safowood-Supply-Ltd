@@ -148,7 +148,7 @@ $(document).ready(function() {
                 $(this).closest('tr').find('.total-price').text(totalItemPrice.toFixed(2));
                 totalPrice += totalItemPrice;
             });
-            $('#total-price').text('Total Price: $' + totalPrice.toFixed(2));
+            $('#total-price').text('Total Price: GHC' + totalPrice.toFixed(2));
         }
 
         // Initial call to update total price

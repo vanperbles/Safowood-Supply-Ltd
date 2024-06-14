@@ -102,7 +102,7 @@
                                     </div>
 
                                 </td>
-                                <td class="total-price">{{ number_format($c['price'] * $c['quantity'], 2) }}</td>
+                                <td class="total-price">GHC {{ number_format($c['price'] * $c['quantity'], 2) }}</td>
 
 
                                 <td>
