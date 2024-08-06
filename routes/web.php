@@ -47,6 +47,9 @@ Route::get('/add-category',[AdminController::class, 'add_category'])->name('add-
 Route::post('/add_category_item',[AdminController::class, 'add_category_item'])->name('add_category_item');
 Route::get('/show_category_item',[AdminController::class, 'show_category_item'])->name('show_category_item');
 Route::get('/delete_category/{id}',[AdminController::class, 'delete_category'])->name('delete_category');
+Route::get('/add_quantity',[AdminController::class, 'add_quantity'])->name('add_quantity');
+Route::post('/update_quantity/{id}',[AdminController::class, 'update_quantity'])->name('update_quantity');
+
 
 // Product Class View
 
@@ -59,6 +62,9 @@ Route::get('/update_product/{id}',[ProductController::class, 'update_product'])-
 
 // Customer Class View
 Route::resource('customers',CustomerController::class);
+Route::get('/customer-detail/{id}', [CustomerController::class, 'customer_detail'])->name('customer-detail');
+
+
 
 // Admin Orders 
 Route::get('/create-order', [AdminController::class, 'create_orders'])->name('create_orders');
@@ -81,5 +87,6 @@ Route::post('/send_user_mail/{id}',[OrdersController::class, 'send_user_mail'])-
 
 // Search In Admin View
 Route::post('/search_order',[OrdersController::class, 'search_order'])->name('search_order');
+
 
 

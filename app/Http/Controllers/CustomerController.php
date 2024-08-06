@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Customer;
+use App\Models\Transaction;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +22,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customer = Customer::where('usertype', 0)->get();
+        $customer = Customer::where('usertype', 1)->get();
 
         return view('customers.index')->with('customers',$customer);
     }
@@ -114,6 +118,40 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $customer->delete();
-        return redirect('customers')->with('message', 'Customer was deleted Succesfuly');
+        return redirect('customers')->with('message', 'Customer was deleted Succesfully');
     }
+
+
+    public function customer_detail($id){
+        // Find the user by their ID
+        $user = User::find($id);
+        
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found.');
+        }
+        
+        // Fetch orders for the user
+        $user_orders = Order::where('user_id', $user->id)->get();
+
+        $products = Product::all();
+
+        $total_trasanction = 0;
+
+        foreach($user_orders as $amount){
+            $total_trasanction = $total_trasanction + $amount->price;
+        }
+        $totalT = Transaction::getTotalTransactionsByUser($id);
+
+        
+        
+        // Pass the user and their orders to the view
+        return view('customers.customer_detail')->with([
+            'user' => $user,
+            'user_orders' => $user_orders,
+            'products' => $products,
+            'totalT' => $totalT,
+            'total_trasanction' => $total_trasanction
+        ]);
+    }
+    
 }

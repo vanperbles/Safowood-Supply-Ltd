@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Notifications\SendEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -20,9 +22,16 @@ class OrdersController extends Controller
 
         
         $data = Cart::where('user_id','=',$userid)->get();
+        $totalAmount = 0;
 
         // checking each item in the cart table and then creating an order for it         
         foreach($data as $data){
+
+            $product = Product::find($data ->product_id);
+            if ($product->quantity < $data->quantity){
+                return redirect()->back()->with('error',"Order quantity for {$data->product_title} exceeds the available stock. The quantity left is {$product->quantity}.");
+            }
+
             $order = new order;
 
             $order->name = $data->name;
@@ -42,11 +51,25 @@ class OrdersController extends Controller
             $order->delivery_status = 'Processing';
             $order->save();
 
+            $totalAmount += $order->price;
+
+            // Updating the product Quantity in the database 
+            $product->quantity -= $data->quantity;
+            $product->save();
+
             // deleting the cart item from the cart table
             $cart_id = $data->id;
             $cart = Cart::find($cart_id);
             $cart->delete();
         }
+
+        $transaction = new Transaction;
+        $transaction->user_id = $userid;
+        $transaction->order_id = $order->id; // Assuming one transaction per order
+        $transaction->total_amount = $totalAmount;
+        $transaction->payment_type = 'Cash on Delivery';
+        $transaction->save();
+
 
         return redirect()->back()->with("message", "Order Succesful");
     }

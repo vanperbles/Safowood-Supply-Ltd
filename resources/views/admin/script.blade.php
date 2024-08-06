@@ -160,4 +160,14 @@ $(document).ready(function() {
         });
     });
 
+    // Customer detail
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.customer-detail');
+        rows.forEach(row => {
+            row.addEventListener('click', function () {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+
 </script>

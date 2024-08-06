@@ -44,7 +44,7 @@
                         </thead>
                         <tbody>
                             @foreach($customers as $c)
-                          <tr>
+                          <tr class="customer-detail" data-href="{{url('customer-detail', $c->id)}}">
                             <td>
                               <div class="form-check form-check-muted m-0">
                                 <label class="form-check-label">

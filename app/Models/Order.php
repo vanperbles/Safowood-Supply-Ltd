@@ -14,4 +14,10 @@ class Order extends Model
     protected $primarykey = 'id';
     protected $guarded = [];
 
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class);
+    }
+
+
 }

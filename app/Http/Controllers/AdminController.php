@@ -36,6 +36,40 @@ class AdminController extends Controller
         return view('admin.showcategory', compact('data'));
     }
 
+    public function update_quantity(Request $request, $id)
+    {
+        
+        // Validate the request data
+        $request->validate([
+            'quantity' => 'required|integer|min:0',  // Ensure quantity is a positive integer
+        ]);
+    
+        // Find the authenticated user
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'You must be logged in to update product quantity.');
+        }
+    
+        // Find the product by ID
+        $product = Product::find($id);
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
+        }
+        
+    
+        // Update the product quantity
+        $product->quantity = $request->input('quantity');
+        $product->save();
+    
+        return redirect()->back()->with('message', 'Product quantity updated successfully.');
+    }
+    
+
+    public function add_quantity(){
+        $products = Product::all();
+        return view('admin.add_quantity', compact('products'));
+    }
+
     public function delete_category($id){
         $data = Category::find($id);
         $data->delete();

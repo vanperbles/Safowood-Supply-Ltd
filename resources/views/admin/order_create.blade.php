@@ -37,8 +37,7 @@
                                     <option value="{{ $product->id }}">{{ $product->name }}</option>
                                 @endforeach
                                 
-                            </select>
-                            
+                            </select>                            
                             
                         </div>
                     </div>

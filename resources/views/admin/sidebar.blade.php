@@ -79,7 +79,7 @@
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="{{url('show_category_item')}}">Category</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{url('products')}}">Product</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">Add Quantity</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('add_quantity')}}">Add Quantity</a></li>
                 <li class="nav-item"> <a class="nav-link" href="#">Stock Remaining</a></li>
               </ul>
             </div>
