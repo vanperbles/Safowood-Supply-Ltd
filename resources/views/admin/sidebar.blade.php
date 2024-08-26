@@ -95,7 +95,7 @@
             <div class="collapse" id="customer">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="{{url('customers')}}">Customer List</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{url('customers.create')}}">Add Customer</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('customers.create')}}">Add Customer</a></li>
                 
               </ul>
             </div>

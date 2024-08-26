@@ -4,6 +4,7 @@
 
 <div class="page-header">
     <h3 class="page-title">Customer</h3>
+    <button  type="submit" class="btn btn-primary ms-auto" ><a href="{{route('payment',$user->id)}}">Make Payment</a></button>
     <button  type="submit" class="btn btn-primary ms-auto" >Debit Total: GHC {{$totalT}}</button>
 
     <nav aria-label="breadcrumb">
@@ -25,8 +26,10 @@
         <form id="add_to_cart_form" action="{{ route('add_to_cart', ['id' => ':product_id']) }}" method="post">
                 @csrf
                                
-  
+                <input type="hidden" name="user_id" value="{{ $user->id }}">
+
                 <div class="row">
+                 
                     <div class="col-md-7">
                     <div class="form-group row">                    
                         <div class="col-sm-9">
@@ -58,6 +61,67 @@
                 </div>     
 
             </form>
+
+        
+            <div class="mt-4">
+                    <h4>Added Items:</h4>
+                    <h4 class="mb-0 total" id="total-price" style="float: right;">GH </h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Remove</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($cart as  $index =>$c)
+                            <tr data-product-id="{{ $c['id'] }}">
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $c['product_title'] }}</td>
+                                <td class="unit-price">{{ $c['price'] }}</td>
+                                <td>
+                                    <div class="input-group" style="max-width: 150px;">
+                                        <button class="input-group-text decrease-quantity" style="background-color: #343a40; color: white;" data-id="{{ $c['id'] }}">-</button>
+                                        <input type="text" class="qty form-control" value="{{ $c['quantity'] }}" style="background-color: #343a40; color: white;" readonly>
+                                        <button class="input-group-text increase-quantity" style="background-color: #343a40; color: white;" data-id="{{ $c['id'] }}">+</button>
+                                    </div>
+
+                                </td>
+                                <td class="total-price">GHC {{ number_format($c['price'] * $c['quantity'], 2) }}</td>
+
+
+                                <td>
+                                    <a href="{{route('remove_cart',$c->id)}}"><div class="badge badge-danger">Remove  </div></a>
+                                </td>
+                                
+                            </tr>
+                        @endforeach
+
+                        
+                        </tbody>
+                        
+                    </table>
+                </div>
+                <div style="align-items: center; margin-top: 20px">
+                    <h1 style="font-size: 18px; padding-bottom: 12px; align-items: center;">Proceed to Order</h1>
+                    
+                    @if(isset($user->id))
+                        <a href="{{ route('cash_order', $user->id) }}" class="btn btn-success">Pay With Cash</a>
+                    @else
+                        <a href="{{ route('cash_order') }}" class="btn btn-success">Pay With Cash</a>
+                    @endif
+
+                    <a href="{{route('momo_order')}}"class="btn btn-success " >Pay With MOMO</a>
+                </div>
+
+        </div>
+    </div>
+
         <div class="row">
             <h4 class="card-title col-md-4 mb-3">Customer {{$user->name}} orders history</h4>
         </div>
@@ -127,4 +191,28 @@
 </div>
 </div>
 
+
+<script>
+    document.getElementById('add_to_cart_form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        
+        // Get the selected product ID
+        var selectedProductId = document.getElementById('product_id').value;
+        console.log(selectedProductId);
+
+        // Replace the ":product_id" placeholder in the form action attribute with the selected product ID
+        var formAction = "{{ route('add_to_cart', ['id' => ':product_id']) }}".replace(':product_id', selectedProductId);
+        
+        // Log the selected product ID (optional)
+        console.log("Selected Product ID: " + selectedProductId);
+
+        // Set the form action attribute to the updated URL
+        this.setAttribute('action', formAction);
+        
+        // Submit the form
+        this.submit();
+    });
+</script>
+
 @stop
+

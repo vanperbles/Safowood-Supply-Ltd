@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -78,17 +79,22 @@ class AdminController extends Controller
     }
 
     //Checking for Cart Items
-    public function create_orders(){
-        if (Auth::id()){
-            $id =Auth::user()->id;
-            $cart = cart::where('user_id', '=', $id)->get();
-           
+    public function create_orders()
+    {
+        if (Auth::id()) {
+            $id = Auth::user()->id;
+            $cart = Cart::where('user_id', $id)->get();
             $products = Product::all();
-            return view('admin.order_create', compact('products', 'cart'));
+            
+            // Retrieve all users (or a specific group of users)
+            $users = User::all();
+    
+            return view('admin.order_create', compact('products', 'cart', 'users'));
+        } else {
+            return redirect()->route('login')->with('error', 'You must be logged in to access this page.');
         }
-        
-
     }
+    
 
 
     //Deleting Cart items

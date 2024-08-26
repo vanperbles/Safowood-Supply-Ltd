@@ -24,8 +24,10 @@
             <form id="add_to_cart_form" action="{{ route('add_to_cart', ['id' => ':product_id']) }}" method="post">
                 @csrf
                                
-  
+                <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+
                 <div class="row">
+                 
                     <div class="col-md-7">
                     <div class="form-group row">                    
                         <div class="col-sm-9">
@@ -118,7 +120,12 @@
                 </div>
                 <div style="align-items: center; margin-top: 20px">
                     <h1 style="font-size: 18px; padding-bottom: 12px; align-items: center;">Proceed to Order</h1>
-                    <a href="{{route('cash_order')}}" class="btn btn-success">Pay With Cash</a>
+                    @if(isset($user_id))
+                        <a href="{{ route('cash_order', $user_id) }}" class="btn btn-success">Pay With Cash</a>
+                    @else
+                        <a href="{{ route('cash_order') }}" class="btn btn-success">Pay With Cash</a>
+                    @endif
+
                     <a href="{{route('momo_order')}}"class="btn btn-success " >Pay With MOMO</a>
                 </div>
 

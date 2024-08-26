@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -129,47 +130,55 @@ class CartController extends Controller
 }
 
 
-    public function add_to_cart(Request $request, $id){
-        if (Auth::id()){
-            $user = Auth::user();
-            $product = product::find($id);
-            
-            if (!$product) {
-                // Handle the case where the product doesn't exist
-                return redirect()->back()->withErrors('Product not found.');
-            }
+public function add_to_cart(Request $request, $id)
+{
+    if (Auth::id()) {
+        $targetUserId = $request->input('user_id');
+        
 
-            // Check if the product already exists in the user's cart
-            $cart = Cart::where('user_id', $user->id)
-                        ->where('product_id', $product->id)
-                        ->first();
-            
-            if ($cart) {
-                // If the product is already in the cart, update the quantity
-                $cart->quantity += $request->quantity;
-            } else {
-                // If the product is not in the cart, create a new cart item
-                $cart = new Cart;
-                $cart->name = $user->name;
-                $cart->email = $user->email;
-                $cart->phone = $user->phone;
-                $cart->user_id = $user->id;
-                $cart->address = $user->address;
-                $cart->product_title = $product->name;
-                $cart->price = ($product->discount_price != null) ? 
-                                $product->discount_price : 
-                                $product->price;
-
-                $cart->image = $product->image;
-                $cart->product_id = $product->id;
-                $cart->quantity = $request->quantity;
-            }
-
-            $cart->save();
-            return redirect()->back()->with("message","Product have been added to cart");
-        }else{
-            return redirect('/login');
+        // Retrieve the target user and product
+        $user = User::find($targetUserId);
+        $product = Product::find($request->input('product_id'));
+        if (!$targetUserId) {
+            return redirect()->back()->withErrors('Please select a user.');
         }
 
+    
+
+        if (!$product || !$user) {
+            // Handle the case where the product or user doesn't exist
+            return redirect()->back()->withErrors('Product or user not found.');
+        }
+
+        // Check if the product already exists in the user's cart
+        $cart = Cart::where('user_id', $user->id)
+                    ->where('product_id', $product->id)
+                    ->first();
+
+        if ($cart) {
+            // If the product is already in the cart, update the quantity
+            $cart->quantity += $request->quantity;
+        } else {
+            // If the product is not in the cart, create a new cart item
+            $cart = new Cart;
+            $cart->name = $user->name;
+            $cart->email = $user->email;
+            $cart->phone = $user->phone;
+            $cart->user_id = $user->id;
+            $cart->address = $user->address;
+            $cart->product_title = $product->name;
+            $cart->price = $product->discount_price != null ? $product->discount_price : $product->price;
+            $cart->image = $product->image;
+            $cart->product_id = $product->id;
+            $cart->quantity = $request->quantity;
+        }
+
+        $cart->save();
+        return redirect()->back()->with('message', 'Product has been added to cart');
+    } else {
+        return redirect('/login');
     }
+}
+
+
 }

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Cart;
 use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +24,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customer = Customer::where('usertype', 1)->get();
+        $customer = Customer::where('usertype', 0)->get();
 
         return view('customers.index')->with('customers',$customer);
     }
@@ -142,10 +144,12 @@ class CustomerController extends Controller
         }
         $totalT = Transaction::getTotalTransactionsByUser($id);
 
+        $carts = Cart::where('user_id', $user->id)->get();
         
         
         // Pass the user and their orders to the view
         return view('customers.customer_detail')->with([
+            'cart' => $carts,
             'user' => $user,
             'user_orders' => $user_orders,
             'products' => $products,
@@ -153,5 +157,80 @@ class CustomerController extends Controller
             'total_trasanction' => $total_trasanction
         ]);
     }
+
+    public function payment($id){
+        $user = User::find($id);
+        
+        return view('customers.payment')->with('user',$user);
+    }
+
+
+    public function processCreditPayment(Request $request, $id)
+    {
+        $user = User::find($id);
+        $transaction = Transaction::where('user_id', $user->id)->latest()->first();
+
+        if ($transaction) {
+            $payment = new Payment;
+            $payment->transaction_id = $transaction->id;
+            $payment->payment_method = $request->input('payment_method'); // e.g., 'Credit Card'
+            $paymentAmount = $request->input('payment_amount');
+
+            // Check if the payment amount exceeds the remaining transaction amount
+            if ($paymentAmount > $transaction->total_amount) {
+                return redirect()->back()->with('error', 'Payment amount exceeds transaction total.');
+            }
+
+            // Subtract the payment amount from the transaction
+            $transaction->total_amount -= $paymentAmount;
+
+            // Determine the payment status
+            if ($transaction->total_amount == 0) {
+                $transaction->payment_status = 'Completed';
+            } elseif ($transaction->total_amount > 0) {
+                $transaction->payment_status = 'Partial';
+            } else {
+                $transaction->payment_status = 'Failed';
+            }            
+
+            // Set the payment details and status in the payment model
+            $payment->amount = $paymentAmount;
+            $payment->payment_status = $transaction->payment_status;
+            $payment->save();
+
+            // Save the updated transaction
+            $transaction->save();
+
+            return redirect()->route('customer-detail', ['id' => $id])->with('message', 'Payment Successful');
+        }
+
+        return redirect()->back()->with('error', 'Transaction not found.');
+    }
+
+    
+
+    public function processDebitPayment(Request $request)
+    {
+        $user = Auth::user();
+        $transaction = Transaction::where('user_id', $user->id)->latest()->first();
+
+        if ($transaction) {
+            $payment = new Payment;
+            $payment->transaction_id = $transaction->id;
+            $payment->payment_method = $request->input('payment_method'); // e.g., 'Credit Card'
+            
+            $paymentAmount = $request->input('payment_amount');
+
+            // Subtract the payment amount from the transaction
+            if ($payment->debitTransaction($paymentAmount)) {
+                return redirect()->back()->with('message', 'Payment Successful');
+            } else {
+                return redirect()->back()->with('error', 'Payment amount exceeds transaction total.');
+            }
+        }
+
+        return redirect()->back()->with('error', 'Transaction not found.');
+    }
+
     
 }

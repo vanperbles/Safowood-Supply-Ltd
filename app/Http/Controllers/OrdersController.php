@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Notifications\SendEmailNotification;
@@ -16,63 +17,78 @@ use function Termwind\render;
 
 class OrdersController extends Controller
 {
-    public function cash_order(){
-        $user = Auth::user();
+    public function cash_order($user_id = null)
+    {
+        if ($user_id) {
+            // If a user ID is provided, find that user
+            $user = User::find($user_id);
+
+            // If the user does not exist, redirect with an error
+            if (!$user) {
+                return redirect()->back()->with('error', 'User not found.');
+            }
+        } else {
+            // If no user ID is provided, use the authenticated user
+            if (Auth::check()) {
+                $user = Auth::user();
+            } else {
+                // If the user is not authenticated and no user ID is provided, redirect to login
+                return redirect('/login')->with('error', 'You must be logged in to place an order.');
+            }
+        }
+
         $userid = $user->id;
-
-        
-        $data = Cart::where('user_id','=',$userid)->get();
+        $data = Cart::where('user_id', $userid)->get();
         $totalAmount = 0;
+        $order = null; // Initialize $order variable
 
-        // checking each item in the cart table and then creating an order for it         
-        foreach($data as $data){
-
-            $product = Product::find($data ->product_id);
-            if ($product->quantity < $data->quantity){
-                return redirect()->back()->with('error',"Order quantity for {$data->product_title} exceeds the available stock. The quantity left is {$product->quantity}.");
+        foreach ($data as $item) {
+            $product = Product::find($item->product_id);
+            if ($product->quantity < $item->quantity) {
+                return redirect()->back()->with('error', "Order quantity for {$item->product_title} exceeds the available stock. The quantity left is {$product->quantity}.");
             }
 
-            $order = new order;
-
-            $order->name = $data->name;
-            $order->email = $data->email;
-            $order->phone = $data->phone;
-            $order->address = $data->address;
-            $order->user_id = $data->user_id;
-
-            $order->product_title = $data->product_title;
-            
-            $order->quantity = $data->quantity;
-            $order->price = $data->price * $data->quantity;
-            $order->image = $data->image;
-            $order->product_id = $data->product_id;
-
-            $order->payment_status ='Cash on Delivery';
+            $order = new Order;
+            $order->name = $item->name;
+            $order->email = $item->email;
+            $order->phone = $item->phone;
+            $order->address = $item->address;
+            $order->user_id = $item->user_id;
+            $order->product_title = $item->product_title;
+            $order->quantity = $item->quantity;
+            $order->price = $item->price * $item->quantity;
+            $order->image = $item->image;
+            $order->product_id = $item->product_id;
+            $order->payment_status = 'Cash on Delivery';
             $order->delivery_status = 'Processing';
             $order->save();
 
             $totalAmount += $order->price;
 
-            // Updating the product Quantity in the database 
-            $product->quantity -= $data->quantity;
+            // Updating the product quantity in the database
+            $product->quantity -= $item->quantity;
             $product->save();
 
-            // deleting the cart item from the cart table
-            $cart_id = $data->id;
-            $cart = Cart::find($cart_id);
+            // Deleting the cart item from the cart table
+            $cart = Cart::find($item->id);
             $cart->delete();
         }
 
-        $transaction = new Transaction;
-        $transaction->user_id = $userid;
-        $transaction->order_id = $order->id; // Assuming one transaction per order
-        $transaction->total_amount = $totalAmount;
-        $transaction->payment_type = 'Cash on Delivery';
-        $transaction->save();
+        // Check if $order was created before trying to use it
+        if ($order) {
+            $transaction = new Transaction;
+            $transaction->user_id = $userid;
+            $transaction->order_id = $order->id; // Use $order->id only if $order is defined
+            $transaction->total_amount = $totalAmount;
+            $transaction->payment_type = 'Cash on Delivery';
+            $transaction->save();
 
-
-        return redirect()->back()->with("message", "Order Succesful");
+            return redirect()->back()->with('message', 'Order Successful');
+        } else {
+            return redirect()->back()->with('error', 'No items found in cart to create an order.');
+        }
     }
+
 
 
 

@@ -63,6 +63,8 @@ Route::get('/update_product/{id}',[ProductController::class, 'update_product'])-
 // Customer Class View
 Route::resource('customers',CustomerController::class);
 Route::get('/customer-detail/{id}', [CustomerController::class, 'customer_detail'])->name('customer-detail');
+Route::get('/payment/{id}', [CustomerController::class, 'payment'])->name('payment');
+Route::post('/credit-payment/{id}', [CustomerController::class, 'processCreditPayment'])->name('credit-payment');
 
 
 
@@ -77,7 +79,7 @@ Route::get('/remove_cart/{id}',[AdminController::class, 'remove_cart'])->name('r
 Route::post('/update_cart', [CartController::class, 'updateCart'])->name('update_cart');
 
 // Orders ClassView
-Route::get('/cash_order',[OrdersController::class, 'cash_order'])->name('cash_order');
+Route::get('/cash_order/{user_id?}',[OrdersController::class, 'cash_order'])->name('cash_order');
 Route::get('/momo_order',[OrdersController::class, 'momo_order'])->name('momo_order');
 Route::get('/orders',[OrdersController::class, 'orders'])->name('orders');
 Route::get('/deliver/{id}',[OrdersController::class, 'deliver'])->name('deliver');
