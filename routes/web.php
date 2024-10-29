@@ -24,7 +24,7 @@ use App\Http\Controllers\OrdersController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::middleware([
@@ -89,6 +89,8 @@ Route::post('/send_user_mail/{id}',[OrdersController::class, 'send_user_mail'])-
 
 // Search In Admin View
 Route::post('/search_order',[OrdersController::class, 'search_order'])->name('search_order');
+
+
 
 
 

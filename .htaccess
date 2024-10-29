@@ -1,18 +1,22 @@
 <IfModule mod_rewrite.c>
-<IfModule mod_negotiation.c>
-    Options -MultiViews
-</IfModule>
 
-RewriteEngine On
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
 
-RewriteCond %{REQUEST_FILENAME} -d [OR]
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^ ^$1 [N]
+    RewriteEngine On
 
-RewriteCond %{REQUEST_URI} (\.\w+$) [NC]
-RewriteRule ^(.*)$ public/$1
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ server.php
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+   RewriteCond %{HTTP_HOST} ^safowood-supply-ltd.com$ [NC,OR]
+   RewriteCond %{HTTP_HOST} ^safowood-supply-ltd.com$
+   RewriteCond %{REQUEST_URI} !public/
+   RewriteRule (.*) /public/$1 [L]
 </IfModule>
